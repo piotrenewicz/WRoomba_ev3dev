@@ -6,7 +6,7 @@ eyes = ev3.UltrasonicSensor()
 
 def setup():
     head.stop_action = 'hold'
-    head.position_sp = 100
+    head.speed_sp = 100
 
 
 def look_there():
@@ -18,5 +18,37 @@ def move_head_to(pos, speed=None):
         head.speed_sp = speed
     head.position_sp = pos
     head.run_to_abs_pos()
+
+
+setup()
+
+
+class Awareness(object):
+    def __enter__(self):
+        self.prev_heading = head.position
+        self.active = True
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        move_head_to(self.prev_heading)
+        self.active = False
+
+    def __iter__(self):
+        self.world = [None for i in range(360)]
+        # if not self.active:
+        #     self.__enter__()
+
+        self.heading = 0
+        move_head_to(self.heading)
+        return self
+
+    def __next__(self):
+        self.heading += 1
+        if self.heading == 300:
+            self.heading = -90
+        if self.heading == 0:
+            raise StopIteration
+        move_head_to(self.heading)
+        return look_there()
 
 
