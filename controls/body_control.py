@@ -40,7 +40,8 @@ class Awareness(object):
 
         self.heading = 0
         move_head_to(self.heading)
-        head.wait_until_not_moving()
+        while head.state == "running":
+            pass
         return self
 
     def __next__(self):
@@ -50,7 +51,8 @@ class Awareness(object):
         if self.heading == 0:
             raise StopIteration
         move_head_to(self.heading)
-        head.wait_until_not_moving()
+        while head.state == "running":
+            pass
         return look_there()
 
 
