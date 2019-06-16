@@ -20,6 +20,13 @@ def move_head_to(pos, speed=None):
     head.run_to_abs_pos()
 
 
+def blocking_move_head_to(pos, speed=None):
+    move_head_to(pos, speed)
+    while head.position != pos:
+        if head.state == 'stalled':
+            break
+
+
 setup()
 
 
@@ -34,25 +41,28 @@ class Awareness(object):
         self.active = False
 
     def __iter__(self):
-        self.world = [None for i in range(360)]
-        # if not self.active:
-        #     self.__enter__()
+        if not self.active:
+            self.__enter__()
+            self.close = True
+        else:
+            self.close = False
 
+        self.world.clear()
         self.heading = 0
-        move_head_to(self.heading)
-        while head.state == "running":
-            pass
+        blocking_move_head_to(self.heading)
         return self
+
+    world = dict()
 
     def __next__(self):
         self.heading += 1
         if self.heading == 300:
             self.heading = -90
+            blocking_move_head_to(self.heading)
         if self.heading == 0:
             raise StopIteration
         move_head_to(self.heading)
-        while head.state == "running":
-            pass
-        return look_there()
+        self.world[self.heading] = look_there()
+        return self.heading
 
 
