@@ -68,8 +68,8 @@ class Awareness(object):
 
     def __next__(self):
         self.heading += 1
-        if self.heading == 300:
-            self.heading = -90
+        if self.heading == 290:
+            self.heading = -120
         if self.heading == 0:
             self._enditer()
 
