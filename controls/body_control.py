@@ -61,7 +61,7 @@ class Awareness(object):
             blocking_move_head_to(self.heading)
         if self.heading == 0:
             raise StopIteration
-        move_head_to(self.heading)
+        blocking_move_head_to(self.heading)
         self.world[self.heading] = look_there()
         return self.heading
 
