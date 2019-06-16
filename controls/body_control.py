@@ -35,6 +35,9 @@ setup()
 
 
 class Awareness(object):
+    active = False
+    close = False
+
     def __enter__(self):
         self.prev_heading = head.position
         self.active = True
