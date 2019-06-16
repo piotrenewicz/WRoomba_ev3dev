@@ -9,6 +9,10 @@ def setup():
     head.speed_sp = 100
 
 
+def initialize_head():
+    pass
+
+
 def look_there():
     return eyes.value()
 
@@ -41,16 +45,21 @@ class Awareness(object):
         self.active = False
 
     def __iter__(self):
-        if not self.active:
+        if self.active:
+            self.close = False
+        else:
             self.__enter__()
             self.close = True
-        else:
-            self.close = False
 
         self.world.clear()
         self.heading = 0
         blocking_move_head_to(self.heading)
         return self
+
+    def _enditer(self):
+        if self.close:
+            self.__exit__(None, None, None)
+        raise StopIteration
 
     world = dict()
 
@@ -58,11 +67,12 @@ class Awareness(object):
         self.heading += 1
         if self.heading == 300:
             self.heading = -90
-            blocking_move_head_to(self.heading)
         if self.heading == 0:
-            raise StopIteration
+            self._enditer()
+
         blocking_move_head_to(self.heading)
         self.world[self.heading] = look_there()
         return self.heading
 
-
+    def __getitem__(self, item):
+        return self.world[item]
